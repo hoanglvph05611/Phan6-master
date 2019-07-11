@@ -17,4 +17,19 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this,SQLiteActivity.class);
         startActivity(intent);
     }
+
+    public void btnDemoProvider(View view) {
+        Intent intent = new Intent(this,ProviderAcitvity.class);
+        startActivity(intent);
+    }
+
+    public void btnSharedPreference(View view) {
+        Intent intent = new Intent(this,SharedPreference.class);
+        startActivity(intent);
+    }
+
+    public void btnExternalStorage(View view) {
+        Intent intent = new Intent(this,ExternalStorage.class);
+        startActivity(intent);
+    }
 }

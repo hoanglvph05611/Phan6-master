@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Phan6</string>
     <string name="title_activity_sqlite">SQLiteActivity</string>
+    <string name="title_activity_provider_acitvity">ProviderAcitvity</string>
+    <string name="title_activity_show_all_contact">ShowAllContact</string>
+    <string name="checkbox">com.lvh.phan6.checkbox</string>
+    <string name="name">com.lvh.phan6.name</string>
+    <string name="password">com.lvh.phan6.password</string>
 </resources>

@@ -14,5 +14,26 @@
       android:onClick="btnDemoSQLite"
       android:text="Demo SQLite"
       android:textAllCaps="false" />
+  <Button
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textAllCaps="false"
+      android:text="Demo Provider"
+      android:id="@+id/btnDemoProvider"
+      android:onClick="btnDemoProvider"/>
+  <Button
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="DemoSharedPreference"
+      android:textAllCaps="false"
+      android:id="@+id/btnSharedPreference"
+      android:onClick="btnSharedPreference"/>
+  <Button
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="ExternalStorage"
+      android:textAllCaps="false"
+      android:id="@+id/btnExternalStorage"
+      android:onClick="btnExternalStorage"/>
 
 </LinearLayout>
