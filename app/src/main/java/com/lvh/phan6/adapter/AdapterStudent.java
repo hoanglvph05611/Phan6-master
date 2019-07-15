@@ -74,7 +74,7 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.ViewHold
                         builder.setCancelable(true);
                         studentDao = new StudentDao(context);
                         try {
-                            int result = studentDao.update(0,edSuaMSHS.getText().toString(), edSuaTenHS.getText().toString(), edSuaLop.getText().toString());
+                            int result = studentDao.update(studentList.get(i).getId(),edSuaMSHS.getText().toString(), edSuaTenHS.getText().toString(), edSuaLop.getText().toString());
                             if (result > 0) {
                                 Toast.makeText(context, "Sửa thành công", Toast.LENGTH_SHORT).show();
                             }
