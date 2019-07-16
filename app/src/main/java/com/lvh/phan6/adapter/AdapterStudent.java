@@ -25,11 +25,13 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.ViewHold
     private Context context;
     private List<Student> studentList;
     private StudentDao studentDao;
+    private IItemClick iItemClick;
 
-    public AdapterStudent(Context context, List<Student> studentList) {
+    public AdapterStudent(Context context, List<Student> studentList, IItemClick iItemClick) {
         this.context = context;
         this.studentList = studentList;
         studentDao = new StudentDao(context);
+        this.iItemClick = iItemClick;
     }
 
     @NonNull
@@ -41,59 +43,22 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
-        final Student student = studentList.get(i);
-        viewHolder.tvMSHS.setText(studentList.get(i).getMshs());
-        viewHolder.tvTenHS.setText(studentList.get(i).getTenHS());
-        viewHolder.tvLop.setText(studentList.get(i).getLop());
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int pos) {
+        final Student student = studentList.get(pos);
+        viewHolder.tvMSHS.setText(studentList.get(pos).getMshs());
+        viewHolder.tvTenHS.setText(studentList.get(pos).getTenHS());
+        viewHolder.tvLop.setText(studentList.get(pos).getLop());
         viewHolder.imgKhoanChi.setImageResource(R.drawable.ic_launcher_background);
         viewHolder.xoaKhoanChi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                studentDao = new StudentDao(context);
-                studentDao.delete(studentList.get(i).getId());
-                studentList.remove(i);
-                notifyDataSetChanged();
+                if (iItemClick != null) iItemClick.onItemDelete(pos);
             }
         });
         viewHolder.suaKhoanChi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                final View dialog = View.inflate(context, R.layout.dialog_sua, null);
-                builder.setView(dialog);
-                final EditText edSuaMSHS = dialog.findViewById(R.id.edSuaMSHS);
-                final EditText edSuaTenHS = dialog.findViewById(R.id.edSuaTenHS);
-                final EditText edSuaLop = dialog.findViewById(R.id.edSuaLop);
-                edSuaMSHS.setText(studentList.get(i).getMshs());
-                edSuaTenHS.setText(studentList.get(i).getTenHS());
-                edSuaLop.setText(studentList.get(i).getLop());
-                builder.setPositiveButton("Sửa", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        builder.setCancelable(true);
-                        studentDao = new StudentDao(context);
-                        try {
-                            int result = studentDao.update(studentList.get(i).getId(),edSuaMSHS.getText().toString(), edSuaTenHS.getText().toString(), edSuaLop.getText().toString());
-                            if (result > 0) {
-                                Toast.makeText(context, "Sửa thành công", Toast.LENGTH_SHORT).show();
-                            }
-                            studentList.clear();
-                            studentList = (ArrayList<Student>) studentDao.getAllStudent();
-                            notifyDataSetChanged();
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        builder.setCancelable(true);
-                    }
-                });
-                builder.show();
-
+                if (iItemClick != null) iItemClick.onItemEdit(pos);
             }
         });
     }
@@ -126,5 +91,10 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.ViewHold
     public void changeDataset(List<Student> studentList) {
         this.studentList = studentList;
         notifyDataSetChanged();
+    }
+
+    public interface IItemClick{
+        void onItemEdit(int pos);
+        void onItemDelete(int pos);
     }
 }

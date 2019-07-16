@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnExternalStorage(View view) {
-        Intent intent = new Intent(this,ExternalStorage.class);
+        Intent intent = new Intent(this,DemoJson.class);
         startActivity(intent);
     }
 }

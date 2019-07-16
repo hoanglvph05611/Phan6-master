@@ -22,7 +22,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SQLiteActivity extends AppCompatActivity {
+public class SQLiteActivity extends AppCompatActivity implements AdapterStudent.IItemClick {
     private EditText edMSHS, edTenHS, edLop;
     private RecyclerView recyclerView;
     private AdapterStudent adapterStudent;
@@ -45,11 +45,12 @@ public class SQLiteActivity extends AppCompatActivity {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        adapterStudent = new AdapterStudent(this, (ArrayList<Student>) studentList);
+        adapterStudent = new AdapterStudent(this, (ArrayList<Student>) studentList, this);
 
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapterStudent);
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,7 +68,6 @@ public class SQLiteActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         studentDao = new StudentDao(SQLiteActivity.this);
-
                         if (checkChi() > 0) {
 
                             Student student = new Student(0, edMSHS.getText().toString(), edTenHS.getText().toString(), edLop.getText().toString());
@@ -122,5 +122,54 @@ public class SQLiteActivity extends AppCompatActivity {
             check1 = -1;
         }
         return check1;
+    }
+
+
+    @Override
+    public void onItemEdit(final int pos) {
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        final View dialog = View.inflate(this, R.layout.dialog_sua, null);
+        builder.setView(dialog);
+        final EditText edSuaMSHS = dialog.findViewById(R.id.edSuaMSHS);
+        final EditText edSuaTenHS = dialog.findViewById(R.id.edSuaTenHS);
+        final EditText edSuaLop = dialog.findViewById(R.id.edSuaLop);
+        edSuaMSHS.setText(studentList.get(pos).getMshs());
+        edSuaTenHS.setText(studentList.get(pos).getTenHS());
+        edSuaLop.setText(studentList.get(pos).getLop());
+
+        builder.setPositiveButton("Sửa", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                builder.setCancelable(true);
+                studentDao = new StudentDao(SQLiteActivity.this);
+                try {
+                    int result = studentDao.update(studentList.get(pos).getId(),edSuaMSHS.getText().toString(), edSuaTenHS.getText().toString(), edSuaLop.getText().toString());
+                    if (result > 0) {
+                        Toast.makeText(SQLiteActivity.this, "Sửa thành công", Toast.LENGTH_SHORT).show();
+                    }
+                    studentList.clear();
+                    studentList = (ArrayList<Student>) studentDao.getAllStudent();
+                    adapterStudent.notifyDataSetChanged();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                builder.setCancelable(true);
+            }
+        });
+        builder.show();
+
+    }
+
+    @Override
+    public void onItemDelete(int pos) {
+        studentDao = new StudentDao(SQLiteActivity.this);
+        studentDao.delete(studentList.get(pos).getId());
+        studentList.remove(pos);
+        adapterStudent.notifyDataSetChanged();
     }
 }

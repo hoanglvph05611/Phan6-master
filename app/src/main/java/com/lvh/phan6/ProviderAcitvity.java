@@ -31,4 +31,5 @@ public class ProviderAcitvity extends AppCompatActivity {
         Intent intent = new Intent(this,ShowAllContact.class);
         startActivity(intent);
     }
+
 }
