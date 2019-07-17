@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -24,7 +25,6 @@ public class CustomDialog extends AlertDialog implements View.OnClickListener {
     private Button btnLuu;
     private Button btnHuy;
     private String strMS, strTen, strLop;
-    private List<Student> studentList;
 
 
     public CustomDialog(Context context, Student student) {
@@ -38,11 +38,11 @@ public class CustomDialog extends AlertDialog implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_sua);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE|WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
         initView();
     }
 
     private void initView() {
-        studentList = new ArrayList<>();
         edSuaMSHS = findViewById(R.id.edSuaMSHS);
         edSuaTenHS = findViewById(R.id.edSuaTenHS);
         edSuaLop = findViewById(R.id.edSuaLop);
@@ -53,20 +53,29 @@ public class CustomDialog extends AlertDialog implements View.OnClickListener {
         btnLuu.setOnClickListener(this);
         btnHuy.setOnClickListener(this);
 
+        initData();
+    }
+
+
+    private void initData(){
+        if (student != null){
+            edSuaMSHS.setText(student.getMshs());
+            edSuaTenHS.setText(student.getTenHS());
+            edSuaLop.setText(student.getLop());
+        }
     }
 
 
     private boolean verifyData() {
-        boolean check1 = true;
         strMS = edSuaMSHS.getText().toString();
         strTen = edSuaTenHS.getText().toString();
         strLop = edSuaLop.getText().toString();
 
         if (strMS.isEmpty() || strTen.isEmpty() || strLop.isEmpty()) {
             Toast.makeText(context, "nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
-            check1 = false;
+            return false;
         }
-        return check1 = true;
+        return true;
     }
 
     @Override
@@ -78,9 +87,9 @@ public class CustomDialog extends AlertDialog implements View.OnClickListener {
                     Toast.makeText(context, "Luu thanh cong", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                student.setMshs(edSuaTenHS.getText().toString().trim());
-                student.setTenHS(edSuaTenHS.getText().toString().trim());
-                student.setLop(edSuaLop.getText().toString().trim());
+                student.setMshs(strMS);
+                student.setTenHS(strTen);
+                student.setLop(strLop);
 
                 listener.onSaveClicked(student);
                 dismiss();
@@ -99,13 +108,4 @@ public class CustomDialog extends AlertDialog implements View.OnClickListener {
         this.listener = customDiaLogListener;
     }
 
-    @Override
-    public void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        try {
-            listener = (CustomDiaLogListener) context;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

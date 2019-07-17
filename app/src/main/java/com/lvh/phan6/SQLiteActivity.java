@@ -47,7 +47,9 @@ public class SQLiteActivity extends AppCompatActivity implements AdapterStudent.
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        adapterStudent = new AdapterStudent(this, (ArrayList<Student>) studentList, this);
+
+        adapterStudent = new AdapterStudent(this, (ArrayList<Student>) studentList, SQLiteActivity.this);
+
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapterStudent);
@@ -93,7 +95,6 @@ public class SQLiteActivity extends AppCompatActivity implements AdapterStudent.
                 AlertDialog dialog = builder.create();
                 dialog.setTitle("Thêm HS");
                 dialog.show();
-
             }
         });
 
@@ -101,13 +102,6 @@ public class SQLiteActivity extends AppCompatActivity implements AdapterStudent.
 
     public void onResume() {
         super.onResume();
-
-        try {
-            studentList = studentDao.getAllStudent();
-            adapterStudent.changeDataset(studentDao.getAllStudent());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
     }
 
     public int checkChi() {
@@ -129,7 +123,6 @@ public class SQLiteActivity extends AppCompatActivity implements AdapterStudent.
         posSelected = pos;
         customDialog(pos);
 
-
     }
 
     @Override
@@ -141,7 +134,6 @@ public class SQLiteActivity extends AppCompatActivity implements AdapterStudent.
     }
 
     public void customDialog(int pos) {
-
         CustomDialog customDialog = new CustomDialog(this, studentList.get(pos));
         customDialog.show();
         customDialog.setListener(this);
@@ -149,16 +141,12 @@ public class SQLiteActivity extends AppCompatActivity implements AdapterStudent.
 
     @Override
     public void onSaveClicked(Student student) {
+        Log.w("EDIT", "Edit data: "+student.getTenHS());
         studentDao = new StudentDao(SQLiteActivity.this);
 
         int result = studentDao.update(student);
         if (result > 0) {
             Toast.makeText(SQLiteActivity.this, "Sửa thành công", Toast.LENGTH_SHORT).show();
-        }
-        try {
-            studentList = studentDao.getAllStudent();
-        } catch (ParseException e) {
-            e.printStackTrace();
         }
         studentList.get(posSelected).setMshs(student.getMshs());
         studentList.get(posSelected).setTenHS(student.getTenHS());

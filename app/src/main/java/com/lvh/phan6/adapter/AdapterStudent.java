@@ -44,9 +44,9 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int pos) {
         final Student student = studentList.get(pos);
-        viewHolder.tvMSHS.setText(studentList.get(pos).getMshs());
-        viewHolder.tvTenHS.setText(studentList.get(pos).getTenHS());
-        viewHolder.tvLop.setText(studentList.get(pos).getLop());
+        viewHolder.tvMSHS.setText(student.getMshs());
+        viewHolder.tvTenHS.setText(student.getTenHS());
+        viewHolder.tvLop.setText(student.getLop());
         viewHolder.imgKhoanChi.setImageResource(R.drawable.ic_launcher_background);
         viewHolder.xoaKhoanChi.setOnClickListener(new View.OnClickListener() {
             @Override
