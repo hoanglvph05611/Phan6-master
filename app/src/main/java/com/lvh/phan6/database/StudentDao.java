@@ -61,12 +61,12 @@ public class StudentDao {
     }
 
     // update
-    public int update(int id ,String mshs, String tenhs, String lop) {
+    public int update(Student student) {
         ContentValues values = new ContentValues();
-        values.put("mshs", mshs);
-        values.put("tenHS", tenhs);
-        values.put("lop", lop);
-        int result = sqLiteDatabase.update(TABLE_NAME, values, "id=?", new String[]{String.valueOf(id)});
+        values.put("mshs", student.getMshs());
+        values.put("tenHS", student.getTenHS());
+        values.put("lop", student.getLop());
+        int result = sqLiteDatabase.update(TABLE_NAME, values, "id=?", new String[]{String.valueOf(student.getId())});
         if (result == 0) {
             return -1;
         }

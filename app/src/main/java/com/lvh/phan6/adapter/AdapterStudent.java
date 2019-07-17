@@ -17,8 +17,6 @@ import com.lvh.phan6.R;
 import com.lvh.phan6.database.StudentDao;
 import com.lvh.phan6.model.Student;
 
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.ViewHolder> {
@@ -26,6 +24,7 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.ViewHold
     private List<Student> studentList;
     private StudentDao studentDao;
     private IItemClick iItemClick;
+
 
     public AdapterStudent(Context context, List<Student> studentList, IItemClick iItemClick) {
         this.context = context;

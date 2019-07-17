@@ -2,6 +2,7 @@ package com.lvh.phan6;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -22,13 +23,14 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SQLiteActivity extends AppCompatActivity implements AdapterStudent.IItemClick {
+public class SQLiteActivity extends AppCompatActivity implements AdapterStudent.IItemClick, CustomDialog.CustomDiaLogListener {
     private EditText edMSHS, edTenHS, edLop;
     private RecyclerView recyclerView;
     private AdapterStudent adapterStudent;
     private StudentDao studentDao;
-    private List<Student> studentList = new ArrayList<>();
+    private List<Student> studentList;
     private String strMS, strTen, strLop;
+    private int posSelected = 0;
 
     private static final String TAG = "Logra";
 
@@ -36,7 +38,7 @@ public class SQLiteActivity extends AppCompatActivity implements AdapterStudent.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sqlite);
-
+        studentList = new ArrayList<>();
         recyclerView = findViewById(R.id.recyclerView);
         studentDao = new StudentDao(this);
         try {
@@ -46,7 +48,6 @@ public class SQLiteActivity extends AppCompatActivity implements AdapterStudent.
             e.printStackTrace();
         }
         adapterStudent = new AdapterStudent(this, (ArrayList<Student>) studentList, this);
-
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapterStudent);
@@ -96,8 +97,6 @@ public class SQLiteActivity extends AppCompatActivity implements AdapterStudent.
             }
         });
 
-//        RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
-//        recyclerView.setLayoutManager(manager);
     }
 
     public void onResume() {
@@ -127,41 +126,9 @@ public class SQLiteActivity extends AppCompatActivity implements AdapterStudent.
 
     @Override
     public void onItemEdit(final int pos) {
-        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        final View dialog = View.inflate(this, R.layout.dialog_sua, null);
-        builder.setView(dialog);
-        final EditText edSuaMSHS = dialog.findViewById(R.id.edSuaMSHS);
-        final EditText edSuaTenHS = dialog.findViewById(R.id.edSuaTenHS);
-        final EditText edSuaLop = dialog.findViewById(R.id.edSuaLop);
-        edSuaMSHS.setText(studentList.get(pos).getMshs());
-        edSuaTenHS.setText(studentList.get(pos).getTenHS());
-        edSuaLop.setText(studentList.get(pos).getLop());
+        posSelected = pos;
+        customDialog(pos);
 
-        builder.setPositiveButton("Sửa", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                builder.setCancelable(true);
-                studentDao = new StudentDao(SQLiteActivity.this);
-                try {
-                    int result = studentDao.update(studentList.get(pos).getId(),edSuaMSHS.getText().toString(), edSuaTenHS.getText().toString(), edSuaLop.getText().toString());
-                    if (result > 0) {
-                        Toast.makeText(SQLiteActivity.this, "Sửa thành công", Toast.LENGTH_SHORT).show();
-                    }
-                    studentList.clear();
-                    studentList = (ArrayList<Student>) studentDao.getAllStudent();
-                    adapterStudent.notifyDataSetChanged();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                builder.setCancelable(true);
-            }
-        });
-        builder.show();
 
     }
 
@@ -172,4 +139,31 @@ public class SQLiteActivity extends AppCompatActivity implements AdapterStudent.
         studentList.remove(pos);
         adapterStudent.notifyDataSetChanged();
     }
+
+    public void customDialog(int pos) {
+
+        CustomDialog customDialog = new CustomDialog(this, studentList.get(pos));
+        customDialog.show();
+        customDialog.setListener(this);
+    }
+
+    @Override
+    public void onSaveClicked(Student student) {
+        studentDao = new StudentDao(SQLiteActivity.this);
+
+        int result = studentDao.update(student);
+        if (result > 0) {
+            Toast.makeText(SQLiteActivity.this, "Sửa thành công", Toast.LENGTH_SHORT).show();
+        }
+        try {
+            studentList = studentDao.getAllStudent();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        studentList.get(posSelected).setMshs(student.getMshs());
+        studentList.get(posSelected).setTenHS(student.getTenHS());
+        studentList.get(posSelected).setLop(student.getLop());
+        adapterStudent.notifyDataSetChanged();
+    }
 }
+
